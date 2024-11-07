@@ -28,11 +28,12 @@ try:
             is_active = random.choice([True, False])
             is_staff = random.choice([True, False])
             is_orderable = random.choice([True, False])
+            gender = random.choice([True, False])   # gender 정의 추가
 
             cursor.execute("""
-                INSERT INTO users (first_name, last_name, email, password, address, contact, is_active, is_staff, is_orderable)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (first_name, last_name, email, password, address, contact, is_active, is_staff, is_orderable))
+                INSERT INTO users (first_name, last_name, email, password, address, contact, is_active, is_staff, is_orderable, gender)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (first_name, last_name, email, password, address, contact, is_active, is_staff, is_orderable, gender))
 
         # 더미 원재료 데이터 삽입
         raw_materials = [
@@ -65,8 +66,8 @@ try:
         products = [
             ('Fish Bun', 'A delicious fish-shaped bun.', 3.00),
             ('Red Bean Bun', 'Sweet bun filled with red bean paste.', 2.50),
-            ('Chocolate Bun', 'Decadent chocolate-filled bun.', 3.50)
-            ('Dumpling Bun', 'Savory handmade dumpling bun', 4.00)  # 시그니처 메뉴 추가
+            ('Chocolate Bun', 'Decadent chocolate-filled bun.', 3.50),
+            ('Dumpling Bun', 'Savory handmade dumpling bun, a signature item.', 4.00)  # 시그니처 메뉴 추가
         ]
         for name, description, price in products:
             cursor.execute("""
@@ -76,14 +77,13 @@ try:
 
         # 더미 일일 기록 데이터 삽입 (20개)
         for _ in range(20):
-            date = fake.date_this_year()
+            change_date = fake.date_this_year()
             total_sales = round(random.uniform(100, 1000), 2)
             total_expense = round(random.uniform(50, 500), 2)
             cursor.execute("""
-                INSERT INTO daily_records (date, total_sales, total_expense)
+                INSERT INTO daily_records (change_quantity, change_type, change_date)
                 VALUES (%s, %s, %s)
-            """, (date, total_sales, total_expense))
-
+            """, (random.randint(1, 100), random.choice(['IN', 'OUT', 'RETURNED', 'DISCARDED']), change_date))
         # 더미 판매 기록 데이터 삽입
         cursor.execute("SELECT id FROM users")
         user_ids = [row['id'] for row in cursor.fetchall()]
